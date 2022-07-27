@@ -28,4 +28,5 @@ public class Email implements Serializable {
     private String text;
     private LocalDateTime sendDateEmail;
     private EmailStatus emailStatus;
+    private String file;
 }

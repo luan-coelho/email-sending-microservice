@@ -16,17 +16,23 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/sending-email")
+@RequestMapping("/mse")
 public class EmailController {
 
     private final EmailService emailService;
     private final ModelMapper mapper;
 
-    @PostMapping
+    @PostMapping("/sending-email")
     public ResponseEntity<EmailDto> sendingEmail(@RequestBody @Valid EmailDto emailDto) {
         Email email = new Email();
         mapper.map(emailDto, email);
-        emailService.sendEmail(email);
         return new ResponseEntity<>(mapper.map(emailService.sendEmail(email), EmailDto.class), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/sending-email-with-file")
+    public ResponseEntity<EmailDto> sendingEmailWithFile(@RequestBody @Valid EmailDto emailDto) {
+        Email email = new Email();
+        mapper.map(emailDto, email);
+        return new ResponseEntity<>(mapper.map(emailService.sendEmailWithFile(email), EmailDto.class), HttpStatus.CREATED);
     }
 }
