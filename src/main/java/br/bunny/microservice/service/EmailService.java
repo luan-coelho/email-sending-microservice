@@ -6,8 +6,7 @@ import br.bunny.microservice.repository.EmailRepository;
 import br.bunny.microservice.util.EmailUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -29,29 +28,34 @@ public class EmailService {
 
     @Transactional
     public Email sendEmail(Email email) {
-        log.info("Sending simple email");
+        log.info("Sending simple email.");
         email.setSendDateEmail(LocalDateTime.now());
 
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(email.getEmailFrom());
-            message.setTo(email.getEmailTo());
-            message.setSubject(email.getSubject());
-            message.setText(email.getText());
+            MimeMessage message = emailSender.createMimeMessage();
+
+            var helper = new MimeMessageHelper(message);
+
+            helper.setTo(email.getEmailTo());
+            helper.setSubject(email.getSubject());
+            helper.setText(replaceWithTheEmailData(email, EmailUtils.htmlToStringConverter()), true);
 
             emailSender.send(message);
             log.info("Simple email sent successfully.");
 
             email.setEmailStatus(EmailStatus.SENT);
-        } catch (MailException e) {
+        } catch (MessagingException e) {
+            log.error("Error sending email.");
             email.setEmailStatus(EmailStatus.ERROR);
         }
 
         return emailRepository.save(email);
     }
 
+    @Transactional
     public Email sendEmailWithFile(Email email) {
-        log.info("Sending simple email with file");
+        log.info("Sending simple email with file.");
+
         try {
             MimeMessage message = emailSender.createMimeMessage();
 
@@ -61,17 +65,18 @@ public class EmailService {
             helper.setSubject(email.getSubject());
             helper.setText(replaceWithTheEmailData(email, EmailUtils.htmlToStringConverter()), true);
 
-//            helper.addAttachment("image.jpeg", new ClassPathResource(email.getFile()));
+            helper.addAttachment("image.jpg",
+                    email.getFile() != null ? new ClassPathResource(email.getFile()) : new ClassPathResource("/static/image.jpg"));
 
             emailSender.send(message);
             log.info("Email with attachment sent successfully.");
 
             email.setEmailStatus(EmailStatus.SENT);
         } catch (MessagingException e) {
+            log.error("Error sending email.");
             email.setEmailStatus(EmailStatus.ERROR);
         }
 
         return emailRepository.save(email);
     }
-
 }
