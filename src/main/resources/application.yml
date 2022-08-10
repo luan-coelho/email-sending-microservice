@@ -1,9 +1,17 @@
 spring:
-  datasource.url: ${DATABASE_URL}
-  datasource.driver-class-name: org.postgresql.Driver
-  jpa.hibernate.ddl-auto: update
+  datasource:
+    url: ${DATABASE_URL}
+    driver-class-name: org.postgresql.Driver
 
-  jpa.open-in-view: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    generate-ddl: true
+
   mail:
     host: smtp.gmail.com
     port: 587
