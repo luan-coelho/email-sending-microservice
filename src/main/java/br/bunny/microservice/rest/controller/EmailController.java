@@ -29,11 +29,4 @@ public class EmailController {
         mapper.map(emailRequest, email);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(emailService.sendEmail(email), ResponseEmailDTO.class));
     }
-
-    @PostMapping("/sending-email-with-file")
-    public ResponseEntity<ResponseEmailDTO> sendingEmailWithFile(@RequestBody @Valid CreateEmailDTO emailRequest) {
-        Email email = new Email();
-        mapper.map(emailRequest, email);
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(emailService.sendEmailWithFile(email), ResponseEmailDTO.class));
-    }
 }

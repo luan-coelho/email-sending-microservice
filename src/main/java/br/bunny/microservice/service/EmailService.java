@@ -6,7 +6,7 @@ import br.bunny.microservice.repository.EmailRepository;
 import br.bunny.microservice.util.EmailUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -14,10 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.time.LocalDateTime;
+import java.io.File;
 
-import static br.bunny.microservice.util.EmailUtils.replaceWithTheEmailData;
+import static br.bunny.microservice.util.EmailUtils.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,34 +28,9 @@ public class EmailService {
 
     @Transactional
     public Email sendEmail(Email email) {
-        log.info("Sending simple email.");
-        email.setSendDateEmail(LocalDateTime.now());
+        log.info("Sending email");
 
-        try {
-            MimeMessage message = emailSender.createMimeMessage();
-
-            var helper = new MimeMessageHelper(message);
-
-            helper.setTo(email.getEmailTo());
-            helper.setSubject(email.getSubject());
-            helper.setText(replaceWithTheEmailData(email, EmailUtils.htmlToStringConverter()), true);
-
-            emailSender.send(message);
-            log.info("Simple email sent successfully.");
-
-            email.setEmailStatus(EmailStatus.SENT);
-        } catch (MessagingException e) {
-            log.error("Error sending email.");
-            email.setEmailStatus(EmailStatus.ERROR);
-        }
-
-        return emailRepository.save(email);
-    }
-
-    @Transactional
-    public Email sendEmailWithFile(Email email) {
-        log.info("Sending simple email with file.");
-
+        String fileName = null;
         try {
             MimeMessage message = emailSender.createMimeMessage();
 
@@ -66,28 +40,34 @@ public class EmailService {
             helper.setSubject(email.getSubject());
             helper.setText(replaceWithTheEmailData(email, EmailUtils.htmlToStringConverter()), true);
 
-            String fileUrl = email.getFileUrl();
-            String fileName = "file".concat(EmailUtils.getFileExtesionByUrl(fileUrl));
+            if (email.getFileUrl() != null) {
+                fileName = buildAttachmentFile(email.getFileUrl());
 
-            String destinationFile = "src/main/resources/static/".concat(fileName);
-            EmailUtils.saveFile(fileUrl, destinationFile);
+                FileSystemResource file = new FileSystemResource(new File("src/main/resources/static/".concat(fileName)));
+                helper.addAttachment(fileName, file);
 
-            helper.addAttachment(fileName, new ClassPathResource("/static/".concat(fileName)));
+                emailSender.send(message);
+                log.info("Email sent successfully");
 
-            emailSender.send(message);
-            log.info("Email with attachment sent successfully");
-
-            EmailUtils.deleteFile(destinationFile);
+                EmailUtils.deleteFile("src/main/resources/static/".concat(fileName));
+            } else {
+                emailSender.send(message);
+            }
 
             email.setEmailStatus(EmailStatus.SENT);
         } catch (MessagingException e) {
             log.error("Error sending email");
             email.setEmailStatus(EmailStatus.ERROR);
-        } catch (IOException e) {
-            log.error("Failed to attach file");
-            email.setEmailStatus(EmailStatus.ERROR);
+        } finally {
+            if (email.getFileUrl() != null) {
+                assert fileName != null;
+                EmailUtils.deleteFile("src/main/resources/static/".concat(fileName));
+            }
         }
-
         return emailRepository.save(email);
+    }
+
+    public static void main(String[] args) {
+        deleteFile("src/main/resources/static/file.png");
     }
 }
