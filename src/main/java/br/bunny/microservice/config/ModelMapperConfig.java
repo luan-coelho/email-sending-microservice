@@ -1,4 +1,4 @@
-package br.bunny.microservice.configuration;
+package br.bunny.microservice.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +9,9 @@ public class ModelMapperConfig {
 
     @Bean
     public ModelMapper getModelMapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+
+        return modelMapper;
     }
 }

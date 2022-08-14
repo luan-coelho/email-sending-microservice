@@ -1,11 +1,10 @@
 package br.bunny.microservice.util;
 
-import br.bunny.microservice.model.Email;
+import br.bunny.microservice.domain.model.Email;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 
 @Slf4j
 public class EmailUtils {
@@ -30,10 +29,35 @@ public class EmailUtils {
         return null;
     }
 
-    public static String replaceWithTheEmailData(Email email, String html){
+    public static String replaceWithTheEmailData(Email email, String html) {
         html = html.replace("***subject***", email.getSubject());
         html = html.replace("***text***", email.getText());
         return html;
+    }
+
+    public static void saveFile(String fileUrl, String destinationFile) throws IOException {
+        URL url = new URL(fileUrl);
+        InputStream is = url.openStream();
+        OutputStream os = new FileOutputStream(destinationFile);
+
+        byte[] b = new byte[8192];
+        int length;
+
+        while ((length = is.read(b)) != -1) {
+            os.write(b, 0, length);
+        }
+
+        is.close();
+        os.close();
+    }
+
+    public static String getFileExtesionByUrl(String url) {
+        return url.substring(url.lastIndexOf("."));
+    }
+
+    public static void deleteFile(String fileUrl) {
+        File file = new File(fileUrl);
+        file.delete();
     }
 }
 

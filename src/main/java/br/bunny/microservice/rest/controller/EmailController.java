@@ -1,7 +1,8 @@
-package br.bunny.microservice.controller;
+package br.bunny.microservice.rest.controller;
 
-import br.bunny.microservice.dto.EmailDto;
-import br.bunny.microservice.model.Email;
+import br.bunny.microservice.rest.controller.dto.CreateEmailDTO;
+import br.bunny.microservice.domain.model.Email;
+import br.bunny.microservice.rest.controller.dto.ResponseEmailDTO;
 import br.bunny.microservice.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,16 +24,16 @@ public class EmailController {
     private final ModelMapper mapper;
 
     @PostMapping("/sending-email")
-    public ResponseEntity<EmailDto> sendingEmail(@RequestBody @Valid EmailDto emailDto) {
+    public ResponseEntity<ResponseEmailDTO> sendingEmail(@RequestBody @Valid CreateEmailDTO emailRequest) {
         Email email = new Email();
-        mapper.map(emailDto, email);
-        return new ResponseEntity<>(mapper.map(emailService.sendEmail(email), EmailDto.class), HttpStatus.CREATED);
+        mapper.map(emailRequest, email);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(emailService.sendEmail(email), ResponseEmailDTO.class));
     }
 
     @PostMapping("/sending-email-with-file")
-    public ResponseEntity<EmailDto> sendingEmailWithFile(@RequestBody @Valid EmailDto emailDto) {
+    public ResponseEntity<ResponseEmailDTO> sendingEmailWithFile(@RequestBody @Valid CreateEmailDTO emailRequest) {
         Email email = new Email();
-        mapper.map(emailDto, email);
-        return new ResponseEntity<>(mapper.map(emailService.sendEmailWithFile(email), EmailDto.class), HttpStatus.CREATED);
+        mapper.map(emailRequest, email);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(emailService.sendEmailWithFile(email), ResponseEmailDTO.class));
     }
 }

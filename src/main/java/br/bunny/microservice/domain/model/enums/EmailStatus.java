@@ -1,4 +1,4 @@
-package br.bunny.microservice.model.enums;
+package br.bunny.microservice.domain.model.enums;
 
 public enum EmailStatus {
     PROCESSING,

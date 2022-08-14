@@ -1,0 +1,20 @@
+@startuml Email
+
+class Email {
+    - id: UUID
+    - ownerRef: String
+    - emailTo: String
+    - subject: String
+    - text: String
+    - sendDate: LocalDateTime
+}
+
+enum EmailStatus {
+    + PROCESSING
+    + SENT
+    + ERROR
+}
+
+Email "*" o-> "1" EmailStatus
+
+@enduml

@@ -1,6 +1,6 @@
-package br.bunny.microservice.model;
+package br.bunny.microservice.domain.model;
 
-import br.bunny.microservice.model.enums.EmailStatus;
+import br.bunny.microservice.domain.model.enums.EmailStatus;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,7 +19,7 @@ public class Email implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID emailId;
+    private UUID id;
     private String ownerRef;
     private String emailTo;
     private String subject;
@@ -27,5 +27,5 @@ public class Email implements Serializable {
     private String text;
     private LocalDateTime sendDateEmail;
     private EmailStatus emailStatus;
-    private String file;
+    private String fileUrl;
 }
