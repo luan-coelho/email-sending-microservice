@@ -1,6 +1,7 @@
 package br.bunny.microservice.domain.model;
 
 import br.bunny.microservice.domain.model.enums.EmailStatus;
+import br.bunny.microservice.domain.model.enums.EmailType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -28,4 +29,5 @@ public class Email implements Serializable {
     private LocalDateTime sendDateEmail;
     private EmailStatus emailStatus;
     private String fileUrl;
+    private EmailType emailType;
 }

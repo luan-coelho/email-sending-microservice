@@ -1,5 +1,6 @@
-package br.bunny.microservice.rest.controller.dto;
+package br.bunny.microservice.rest.dto;
 
+import br.bunny.microservice.domain.model.enums.EmailType;
 import lombok.Data;
 
 import java.util.UUID;
@@ -13,4 +14,5 @@ public class ResponseEmailDTO {
     private String subject;
     private String text;
     private String fileUrl;
+    private EmailType emailType;
 }

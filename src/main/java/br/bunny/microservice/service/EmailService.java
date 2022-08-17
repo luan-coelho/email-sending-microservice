@@ -38,7 +38,7 @@ public class EmailService {
 
             helper.setTo(email.getEmailTo());
             helper.setSubject(email.getSubject());
-            helper.setText(replaceWithTheEmailData(email, EmailUtils.htmlToStringConverter()), true);
+            helper.setText(replaceWithTheEmailData(email, EmailUtils.buildEmailBody(email.getEmailType())), true);
 
             if (email.getFileUrl() != null) {
                 fileName = buildAttachmentFile(email.getFileUrl());

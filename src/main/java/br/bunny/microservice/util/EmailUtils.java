@@ -1,6 +1,7 @@
 package br.bunny.microservice.util;
 
 import br.bunny.microservice.domain.model.Email;
+import br.bunny.microservice.domain.model.enums.EmailType;
 import br.bunny.microservice.exception.BadRequestException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,14 +14,14 @@ import java.nio.file.StandardCopyOption;
 @Slf4j
 public class EmailUtils {
 
-    private static final String CONTENT_PATH = "src/main/resources/static";
+    private static final String CONTENT_PATH = "src/main/resources/static/";
 
-    public static String htmlToStringConverter() {
+    public static String buildEmailBody(EmailType emailType) {
         log.info("Converter Html to String...");
 
         StringBuilder contentBuilder = new StringBuilder();
         try {
-            BufferedReader in = new BufferedReader(new FileReader(CONTENT_PATH.concat("/default-message.html")));
+            BufferedReader in = new BufferedReader(new FileReader(CONTENT_PATH.concat(emailType.getHtmlFileName())));
             String str;
             while ((str = in.readLine()) != null) {
                 contentBuilder.append(str);
