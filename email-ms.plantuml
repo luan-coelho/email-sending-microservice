@@ -6,6 +6,7 @@ class Email {
     - emailTo: String
     - subject: String
     - text: String
+    - fileUrl: String
     - sendDate: LocalDateTime
 }
 
@@ -15,6 +16,13 @@ enum EmailStatus {
     + ERROR
 }
 
+enum EmailType {
+    + DEFAULT
+    + RESET_PASSWOR
+}
+
+Email "*" o-> "1" EmailType
 Email "*" o-> "1" EmailStatus
+
 
 @enduml
