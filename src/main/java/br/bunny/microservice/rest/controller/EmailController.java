@@ -1,20 +1,18 @@
 package br.bunny.microservice.rest.controller;
 
-import br.bunny.microservice.rest.dto.CreateEmailDTO;
 import br.bunny.microservice.domain.model.Email;
+import br.bunny.microservice.rest.dto.CreateEmailDTO;
 import br.bunny.microservice.rest.dto.ResponseEmailDTO;
 import br.bunny.microservice.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/mse")
